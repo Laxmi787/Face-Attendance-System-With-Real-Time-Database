@@ -1,29 +1,44 @@
 import pickle
 import cv2
-import face_recognition
 import numpy as np
 from fastapi import FastAPI, UploadFile, File
+
 import firebase_admin
 from firebase_admin import credentials, db
 
-# Initialize Firebase (Render Secret File path)
+from insightface.app import FaceAnalysis
+from scipy.spatial.distance import cdist
+
+
+# -------- Firebase (Render Secret File path) --------
 cred = credentials.Certificate("/etc/secrets/serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': "https://faceattendancerealtime-bb63c-default-rtdb.firebaseio.com/"
 })
 
-# Load encodings
+# -------- Load Encodings --------
 with open("/app/EncodeFile.p", "rb") as f:
     encodeListKnown, studentIds = pickle.load(f)
 
+encodeListKnown = np.array(encodeListKnown)
+
+
+# -------- InsightFace (Face Recognition Engine) --------
+face_app = FaceAnalysis()
+face_app.prepare(ctx_id=0)     # CPU mode
+
+
 app = FastAPI(title="Face Attendance System API")
+
 
 @app.get("/")
 def home():
     return {"status": "Face Attendance API running"}
 
+
 @app.post("/mark-attendance")
 async def mark_attendance(file: UploadFile = File(...)):
+
     image_bytes = await file.read()
     np_img = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
@@ -31,20 +46,20 @@ async def mark_attendance(file: UploadFile = File(...)):
     if img is None:
         return {"error": "Invalid image"}
 
-    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    face_locations = face_recognition.face_locations(rgb)
-    face_encodings = face_recognition.face_encodings(rgb, face_locations)
+    faces = face_app.get(img)
 
-    if not face_encodings:
+    if not faces:
         return {"message": "No face detected"}
 
-    matches = face_recognition.compare_faces(encodeListKnown, face_encodings[0])
-    distances = face_recognition.face_distance(encodeListKnown, face_encodings[0])
+    # use first face only
+    face_encoding = faces[0].normed_embedding.reshape(1, -1)
 
+    distances = cdist(face_encoding, encodeListKnown, metric="euclidean")[0]
     match_index = np.argmin(distances)
 
-    if matches[match_index]:
+    if distances[match_index] < 0.9:      # threshold
         student_id = studentIds[match_index]
+
         ref = db.reference(f"Students/{student_id}")
         student = ref.get()
 
