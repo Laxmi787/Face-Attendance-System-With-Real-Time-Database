@@ -1,6 +1,7 @@
 streamlit
 opencv-python-headless
-face-recognition
+face-recognition-models
+face-recognition @ git+https://github.com/ageitgey/face_recognition
 numpy
 firebase-admin
 
