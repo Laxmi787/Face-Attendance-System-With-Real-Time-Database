@@ -4,6 +4,7 @@ opencv-python-headless
 numpy
 firebase-admin
 insightface
+onnxruntime
 scipy
 face-recognition-models
 
