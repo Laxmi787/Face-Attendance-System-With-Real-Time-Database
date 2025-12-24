@@ -3,6 +3,7 @@ uvicorn
 opencv-python-headless
 numpy
 firebase-admin
-face-recognition-models
 insightface
+scipy
+face-recognition-models
 
