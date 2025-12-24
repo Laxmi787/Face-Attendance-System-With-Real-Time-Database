@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Face Attendance Camera</title>
+
+    <style>
+        body { 
+            font-family: Arial; 
+            text-align: center; 
+            background: #f7f7f7;
+        }
+
+        video, canvas {
+            width: 400px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+
+<h2>Face Attendance System</h2>
+
+<video id="camera" autoplay></video>
+<canvas id="snapshot" style="display:none;"></canvas>
+
+<br>
+<button onclick="capture()">Mark Attendance</button>
+
+<p id="result">Status: Waiting...</p>
+
+<script>
+    const video = document.getElementById("camera");
+    const result = document.getElementById("result");
+    const canvas = document.getElementById("snapshot");
+
+    // Start camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => video.srcObject = stream)
+        .catch(err => result.innerHTML = "Camera blocked!");
+
+    async function capture() {
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        canvas.getContext("2d").drawImage(video, 0, 0);
+
+        const blob = await new Promise(resolve =>
+            canvas.toBlob(resolve, "image/jpeg")
+        );
+
+        const formData = new FormData();
+        formData.append("file", blob, "photo.jpg");
+
+        result.innerHTML = "Sending...";
+
+        const response = await fetch(
+            "https://face-attendance-system-with-real-time-z6d2.onrender.com/mark-attendance",
+            { method: "POST", body: formData }
+        );
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+            result.innerHTML = `✔ Marked Present: ${data.name}`;
+        } 
+        else if (data.status === "unknown") {
+            result.innerHTML = "❌ Face not recognized";
+        } 
+        else {
+            result.innerHTML = "⚠ Error";
+        }
+    }
+</script>
+
+</body>
+</html>
