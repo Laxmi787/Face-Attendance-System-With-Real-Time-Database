@@ -1,9 +1,9 @@
 fastapi
 uvicorn
-opencv-python-headless
 numpy
-firebase-admin
-facenet-pytorch
-torch
+opencv-python-headless
 scipy
+firebase-admin
+insightface==0.7.3
+onnxruntime-cpu==1.16.3
 
