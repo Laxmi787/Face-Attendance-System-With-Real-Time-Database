@@ -1,8 +1,6 @@
-fastapi
-uvicorn
+streamlit
 opencv-python-headless
+face-recognition
 numpy
 firebase-admin
-python-multipart
-scipy
 
