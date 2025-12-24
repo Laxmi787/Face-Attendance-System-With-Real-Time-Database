@@ -6,14 +6,14 @@ from fastapi import FastAPI, UploadFile, File
 import firebase_admin
 from firebase_admin import credentials, db
 
-# Initialize Firebase
-cred = credentials.Certificate("serviceAccountKey.json")
+# Initialize Firebase (Render Secret File path)
+cred = credentials.Certificate("/etc/secrets/serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': "https://faceattendancerealtime-bb63c-default-rtdb.firebaseio.com/"
 })
 
 # Load encodings
-with open("EncodeFile.p", "rb") as f:
+with open("/app/EncodeFile.p", "rb") as f:
     encodeListKnown, studentIds = pickle.load(f)
 
 app = FastAPI(title="Face Attendance System API")
@@ -27,6 +27,9 @@ async def mark_attendance(file: UploadFile = File(...)):
     image_bytes = await file.read()
     np_img = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+
+    if img is None:
+        return {"error": "Invalid image"}
 
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     face_locations = face_recognition.face_locations(rgb)
@@ -54,3 +57,4 @@ async def mark_attendance(file: UploadFile = File(...)):
         }
 
     return {"status": "unknown"}
+
