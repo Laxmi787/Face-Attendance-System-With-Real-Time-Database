@@ -1,4 +1,5 @@
 # Face Attendance System with Real-Time Database
+https://www.linkedin.com/posts/laxmi-chaudhary-2b57042ba_facialrecognition-realtimedatabase-machinelearning-activity-7265364217065578497-tvNs?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAEyikKkB72N4T6Gt2cFDr0Y6DI9OcCSO10k
 
 ##  Overview
 The **Face Attendance System** is a real-time attendance management application that uses
