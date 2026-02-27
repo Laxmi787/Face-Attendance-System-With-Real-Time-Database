@@ -47,6 +47,15 @@ Face-Attendance-System/
 3. The detected face is compared with stored encodings.
 4. If a match is found, attendance is automatically marked.
 5. Attendance records are stored in a real-time cloud database.
+6. <img width="368" height="184" alt="image" src="https://github.com/user-attachments/assets/0650c1f6-8472-497b-abdb-373597b3fcfc" />
+<img width="367" height="185" alt="image" src="https://github.com/user-attachments/assets/1a6ac1cf-6bac-481e-be03-7b0ad773e8f0" />
+<img width="374" height="188" alt="image" src="https://github.com/user-attachments/assets/b8068e80-28a7-4150-88c2-adcc20b08bcd" />
+<img width="374" height="185" alt="image" src="https://github.com/user-attachments/assets/fb594d07-7f19-4313-8cc1-27716af7e80c" />
+<img width="373" height="157" alt="image" src="https://github.com/user-attachments/assets/8bf86113-4c4d-4d93-a710-08d2eed942c2" />
+
+
+
+
 
 ---
 
